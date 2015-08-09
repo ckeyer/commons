@@ -22,7 +22,7 @@ func Sha1Sum(b []byte) string {
 func HmacSha1(message, key []byte) string {
 	mac := hmac.New(sha1.New, key)
 	mac.Write(message)
-	return Byte2String(mac.Sum(nil))
+	return Bytes2String(mac.Sum(nil))
 }
 
 func CheckHmacSha1(message, messageMAC, key []byte) bool {
