@@ -1,6 +1,7 @@
 package lib
 
 import (
+	"crypto/hmac"
 	"crypto/md5"
 	"crypto/sha1"
 	"encoding/hex"
@@ -16,4 +17,17 @@ func Sha1Sum(b []byte) string {
 	h := sha1.New()
 	h.Write(b)
 	return hex.EncodeToString(h.Sum(nil))
+}
+
+func HmacSha1(message, key []byte) string {
+	mac := hmac.New(sha1.New, key)
+	mac.Write(message)
+	return Byte2String(mac.Sum(nil))
+}
+
+func CheckHmacSha1(message, messageMAC, key []byte) bool {
+	mac := hmac.New(sha1.New, key)
+	mac.Write(message)
+	expectedMAC := mac.Sum(nil)
+	return hmac.Equal(messageMAC, expectedMAC)
 }
