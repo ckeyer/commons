@@ -1,0 +1,12 @@
+package mysql
+
+import (
+//	"github.com/"
+)
+
+type MySql struct(
+	Host string
+	Post string
+	ConnStr string
+)
+
