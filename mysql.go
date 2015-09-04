@@ -17,28 +17,11 @@ type MySqlConfig struct {
 	ConnStr string
 }
 
-func Conn(m *MySqlConfig) (db *sql.DB, err error) {
-	connStr := ""
-	for {
-		if m.ConnStr != "" {
-			connStr = m.ConnStr
-			break
-		}
-		if m.Host == "" {
-			m.Host = "localhost"
-		}
-		if m.Port == "" {
-			m.Port = "3306"
-		}
-		if m.User == "" {
-			m.User = "root"
-		}
-		if m.Password == "" {
-			m.Password = "root"
-		}
-		connStr = fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", m.User, m.Password, m.Host, m.Port, m.Database)
-		break
-	}
+var (
+	ms *MySqlConfig
+)
+
+func Conn(connStr string) (db *sql.DB, err error) {
 
 	db, err := sql.Open("mysql", connStr)
 	if err != nil {
@@ -47,4 +30,28 @@ func Conn(m *MySqlConfig) (db *sql.DB, err error) {
 	if err = db.Ping(); err != nil {
 		return
 	}
+}
+
+// GetConnStr 获取连接字符串
+func GetConnStr() string {
+	if ms != nil {
+		if ms.ConnStr != "" {
+			return ms.ConnStr
+		}
+		if ms.Host == "" {
+			ms.Host = "localhost"
+		}
+		if ms.Port == "" {
+			ms.Port = "3306"
+		}
+		if ms.User == "" {
+			ms.User = "root"
+		}
+		if ms.Password == "" {
+			ms.Password = "root"
+		}
+		ms.ConnStr = fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", m.User, m.Password, m.Host, m.Port, m.Database)
+		return ms.ConnStr
+	}
+	return ""
 }
