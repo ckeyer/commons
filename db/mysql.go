@@ -13,6 +13,7 @@ type MySqlConfig struct {
 	User     string
 	Password string
 	Database string
+	Charset  string
 }
 
 func Conn(connStr string) (db *sql.DB, err error) {
@@ -42,7 +43,7 @@ func (m *MySqlConfig) GetConnStr() string {
 		if m.Password == "" {
 			m.Password = "root"
 		}
-		connStr := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s", m.User, m.Password, m.Host, m.Port, m.Database)
+		connStr := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=%s", m.User, m.Password, m.Host, m.Port, m.Database, m.Charset)
 		return connStr
 	}
 	return ""
