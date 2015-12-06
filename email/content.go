@@ -33,7 +33,7 @@ Website: http://www.ckeyer.com/
 `
 )
 
-func setContent(content string) []byte {
+func SetContent(content string) []byte {
 	rw := bytes.NewBuffer(nil)
 	t, _ := template.New("emailTmp").Parse(emailTemplate)
 	// template.New("sd").ParseFiles(...)

@@ -8,13 +8,13 @@ type Account struct {
 }
 
 var (
-	defaultAccount = Account{
+	DefaultAccount = Account{
 		Username: "ckeyer_alarm@163.com",
 		Nickname: "Ckeyer-Alarm",
 		Password: "fpwjxqryyrfqccjr",
 		Host:     "smtp.163.com:25",
 	}
-	tmpAccount = Account{
+	TmpAccount = Account{
 		Username: "sf_monitor@163.com",
 		Nickname: "SF-Monitor",
 		Password: "cqwsmdgupjmareyc",
