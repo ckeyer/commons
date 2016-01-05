@@ -21,8 +21,8 @@ func RandomString(count int, set ...[]byte) string {
 	var sets []byte
 	var ret = make([]byte, count)
 	if len(set) == 0 {
-		sets = []byte(ALPHASYM)
-		setlen := len(ALPHASYM)
+		sets = []byte(ALPHANUM)
+		setlen := len(ALPHANUM)
 		for i := 0; i < count; i++ {
 			ret[i] = sets[RandomInt(0, setlen-1)]
 		}
