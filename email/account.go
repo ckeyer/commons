@@ -20,6 +20,12 @@ var (
 		Password: "cqwsmdgupjmareyc",
 		Host:     "smtp.163.com:25",
 	}
+	FunxData = Account{
+		Username: "funxdata@163.com",
+		Nickname: "Funx-Data",
+		Password: "orrmtgbgmdxmcsru",
+		Host:     "smtp.163.com:25",
+	}
 )
 
 func NewAccount(user, nick, passwd, host string) *Account {
