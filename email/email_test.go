@@ -7,7 +7,7 @@ import (
 
 func TestSendEmail(t *testing.T) {
 	// return
-	err := SendMail(FunxData, "邮件发送测试", "this is a test email", "dev@ckeyer.com", "wangcj1214@gmail.com")
+	err := SendMail(CKAC, "邮件发送测试", "this is a test email", "dev@ckeyer.com", "wangcj1214@gmail.com")
 	if err != nil {
 		t.Error(err)
 	}

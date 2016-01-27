@@ -26,6 +26,12 @@ var (
 		Password: "orrmtgbgmdxmcsru",
 		Host:     "smtp.163.com:25",
 	}
+	CKAC = Account{
+		Username: "alarm@ckeyer.com",
+		Nickname: "Ckeyer-Lala",
+		Password: "ginopqrrimzcbhfb",
+		Host:     "smtp.qq.com:25",
+	}
 )
 
 func NewAccount(user, nick, passwd, host string) *Account {
