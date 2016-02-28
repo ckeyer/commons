@@ -13,7 +13,18 @@ var (
 const (
 	CONTENT_TYPE_HTML = "Content-Type: text/html; charset=UTF-8"
 	CONTENT_TYPE_TEXT = "Content-Type: text/plain; charset=UTF-8"
+
+	A_LEVEL_DEBUG   = "debug"
+	A_LEVEL_WARM    = "warm"
+	A_LEVEL_ERROR   = "error"
+	A_LEVEL_SUCCESS = "success"
+	A_LEVEL_INFO    = "info"
 )
+
+type Email struct {
+	acc  *Account
+	tmpl map[string]interface{}
+}
 
 func SendMail(account Account, title, body string, send_to ...string) error {
 	hp := strings.Split(account.Host, ":")
