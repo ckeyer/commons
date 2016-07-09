@@ -46,5 +46,6 @@ func Init(name ...string) {
 		log.SetLevel(log.ErrorLevel)
 	default:
 	}
+	log.SetFormatter(new(log.JSONFormatter))
 
 }
