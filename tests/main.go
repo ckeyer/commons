@@ -3,7 +3,9 @@ package main
 import (
 	log "github.com/Sirupsen/logrus"
 	"github.com/ckeyer/commons/config"
+	"github.com/ckeyer/commons/util"
 	"github.com/spf13/viper"
+	"time"
 )
 
 func init() {
@@ -21,9 +23,22 @@ func main() {
 		log.Error(err)
 		return
 	}
-
 	log.Info(u)
 
+	closeAll := make(chan int)
+	go func() {
+		for {
+			select {
+			case <-time.Tick(time.Second):
+				log.Info("one second gone...")
+			case <-closeAll:
+				log.Debug("over")
+				return
+			}
+		}
+	}()
+
+	util.WaitForExit(true, closeAll)
 }
 
 type User struct {
