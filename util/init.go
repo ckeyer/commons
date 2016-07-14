@@ -24,7 +24,11 @@ func WaitForExit(twice bool, closeCh ...chan int) {
 			if twice && !once {
 				once = true
 				for _, v := range closeCh {
-					close(v)
+					select {
+					case <-v:
+					default:
+						close(v)
+					}
 				}
 				fmt.Println("Send ^C to force exit.")
 			} else {
