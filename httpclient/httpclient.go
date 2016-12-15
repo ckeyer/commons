@@ -1,4 +1,4 @@
-package web
+package httpclient
 
 import (
 	"bytes"
@@ -6,6 +6,10 @@ import (
 	"mime/multipart"
 	"net/http"
 	"os"
+)
+
+var (
+	stdCli = NewClient()
 )
 
 // 通过HTTP上传文件
