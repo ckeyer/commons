@@ -23,6 +23,14 @@ func Tgz(src, dst string) error {
 	return newTarContext(src, dst, true).tar()
 }
 
+func UnTar(targetFile, to string) error {
+	return newTarContext(to, targetFile, false).untar()
+}
+
+func UnTgz(targetFile, to string) error {
+	return newTarContext(to, targetFile, true).untar()
+}
+
 func newTarContext(src, dst string, gz bool) *tarContext {
 	return &tarContext{
 		src: src,
@@ -99,9 +107,59 @@ func (tc *tarContext) writeTar(tw *tar.Writer) error {
 		_, err = io.Copy(tw, file)
 		if err != nil {
 			return err
+
 		}
 		return nil
 	})
+}
+
+func (tc *tarContext) untar() error {
+	f, err := os.Open(tc.dst)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+
+	var tr *tar.Reader
+	if tc.gz {
+		gr, err := gzip.NewReader(f)
+		if err != nil {
+			return err
+		}
+		defer gr.Close()
+
+		tr = tar.NewReader(gr)
+	} else {
+		tr = tar.NewReader(f)
+	}
+
+	for {
+		hd, err := tr.Next()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			return err
+		}
+
+		localName := filepath.Join(tc.src, hd.Name)
+		if hd.FileInfo().IsDir() {
+			os.MkdirAll(localName, 0755)
+			continue
+		}
+
+		fw, err := os.OpenFile(localName, os.O_CREATE|os.O_RDWR, 0644)
+		if err != nil {
+			return err
+		}
+
+		_, err = io.CopyN(fw, tr, hd.Size)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
 func trimDirPrefix(path, dir string) string {
