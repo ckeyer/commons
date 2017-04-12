@@ -46,3 +46,7 @@ func RandomInt(start, end int) int {
 func RandomInt64(start, end int64) int64 {
 	return rand.Int63n(end-start+1) + start
 }
+
+func RandomUUID() string {
+	return NewV4().String()
+}
