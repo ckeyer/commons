@@ -27,8 +27,6 @@ type Email struct {
 }
 
 func SendMail(account Account, title, body string, send_to ...string) error {
-	hp := strings.Split(account.Host, ":")
-	auth := smtp.PlainAuth("", account.Username, account.Password, hp[0])
 	content_type := CONTENT_TYPE_TEXT
 	if strings.HasPrefix(body, "<!DOCTYPE html>") || strings.HasPrefix(body, "<html") {
 		content_type = CONTENT_TYPE_HTML
@@ -39,6 +37,6 @@ func SendMail(account Account, title, body string, send_to ...string) error {
 	to := strings.Join(send_to, ";")
 	content := []byte("To: " + to + "\r\nFrom: " + account.Nickname + "<" + account.Username + ">\r\nSubject: " + title + "\r\n" +
 		content_type + "\r\n\r\n" + body)
-	err := smtp.SendMail(account.Host, auth, account.Username, send_to, content)
+	err := smtp.SendMail(account.Host, account.Auth, account.Username, send_to, content)
 	return err
 }
