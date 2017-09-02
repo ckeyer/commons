@@ -7,25 +7,25 @@ import (
 	"encoding/hex"
 )
 
-func Md5Sum(b []byte) string {
+func MD5(b []byte) string {
 	h := md5.New()
 	h.Write(b)
 	return hex.EncodeToString(h.Sum(nil))
 }
 
-func Sha1Sum(b []byte) string {
+func SHA1(b []byte) string {
 	h := sha1.New()
 	h.Write(b)
 	return hex.EncodeToString(h.Sum(nil))
 }
 
-func HmacSha1(message, key []byte) string {
+func HMACSHA1(message, key []byte) string {
 	mac := hmac.New(sha1.New, key)
 	mac.Write(message)
-	return Bytes2String(mac.Sum(nil))
+	return hex.EncodeToString(mac.Sum(nil))
 }
 
-func CheckHmacSha1(message, messageMAC, key []byte) bool {
+func CheckHMACSHA1(message, messageMAC, key []byte) bool {
 	mac := hmac.New(sha1.New, key)
 	mac.Write(message)
 	expectedMAC := mac.Sum(nil)

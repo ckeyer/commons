@@ -1,11 +1,12 @@
 package main
 
 import (
+	"time"
+
 	log "github.com/Sirupsen/logrus"
 	"github.com/ckeyer/commons/config"
 	"github.com/ckeyer/commons/util"
 	"github.com/spf13/viper"
-	"time"
 )
 
 func init() {
