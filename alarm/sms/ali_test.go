@@ -5,10 +5,11 @@ import (
 )
 
 var (
-	alikeyid     = "LTAIVsVc3tUWjWOU"
-	alikeysecret = "WDm4dQK4i77vNRdrkTu3eZgBF0w18P"
+	alikeyid     = ""
+	alikeysecret = ""
 )
 
 func TestAliSms(t *testing.T) {
-	cli := NewAliSmsCli(alikeyid, alikeysecret)
+	return
+	// cli := NewAliSmsCli(alikeyid, alikeysecret)
 }

@@ -1,8 +1,6 @@
 package sms
 
 import (
-	"bytes"
-	"encoding/json"
 	"net/url"
 
 	"github.com/ckeyer/commons/httpclient"
@@ -47,7 +45,7 @@ func NewAliSmsCli(accessKeyId, accessKeySecret string) *AliSmsClient {
 }
 
 func (a *AliSmsClient) newAliReqBody() *AliReqBody {
-	body := &AliReqBody{
+	return &AliReqBody{
 		AccessKeyId:      a.AccessKeyId,
 		Action:           "SingleSendSms",
 		Format:           "JSON",
@@ -59,29 +57,29 @@ func (a *AliSmsClient) newAliReqBody() *AliReqBody {
 	}
 }
 
-func (a *AliSmsClient) baseReq() *url.URL {
+func (a *AliSmsClient) baseReq(req *AliReqBody) *url.URL {
 	u, _ := url.Parse(AliAPIServer)
 	q := u.Query()
 
-	q.Set("Format", a.Format)
-	q.Set("Version", a.Version)
-	q.Set("Signature", a.Signature)
-	q.Set("SignatureMethod", a.SignatureMethod)
+	q.Set("Format", req.Format)
+	q.Set("Version", req.Version)
+	q.Set("Signature", req.Signature)
+	q.Set("SignatureMethod", req.SignatureMethod)
 	q.Set("SignatureNonce", util.RandomUUID())
-	q.Set("SignatureVersion", a.SignatureVersion)
+	q.Set("SignatureVersion", req.SignatureVersion)
 	q.Set("AccessKeyId", a.AccessKeyId)
-	q.Set("Timestamp", a.Timestamp)
+	q.Set("Timestamp", req.Timestamp)
 
 	u.RawQuery = q.Encode()
 	return u
 }
 
 func (a *AliSmsClient) SendSms(tmplID string, data interface{}) error {
-	buf := &bytes.Buffer{}
-	err := json.NewEncoder(buf).Encode(data)
-	if err != nil {
-		return err
-	}
+	// buf := &bytes.Buffer{}
+	// err := json.NewEncoder(buf).Encode(data)
+	// if err != nil {
+	// 	return err
+	// }
 
-	a.constructReqBody(tmplID, buf.String())
+	return nil
 }
