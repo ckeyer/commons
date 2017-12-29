@@ -2,7 +2,6 @@ package version
 
 import (
 	"fmt"
-	"strings"
 	"time"
 
 	"github.com/Masterminds/semver"
@@ -48,7 +47,7 @@ func init() {
 
 // GetVersion
 func GetVersion() string {
-	return version
+	return fmt.Sprintf("%d.%d.%d", v.Major(), v.Minor(), v.Patch())
 }
 
 // GetGitCommit
@@ -58,9 +57,13 @@ func GetGitCommit() string {
 
 // GetCompleteVersion
 func GetCompleteVersion() string {
-	return strings.Join([]string{GetVersion(), GetGitCommit()}, "-")
+	return v.String()
 }
 
-func GetBuildAt() string {
+func GetBuildAt() time.Time {
+	return bAt
+}
+
+func GetBuildAtString() string {
 	return bAt.Format(timefmt)
 }
