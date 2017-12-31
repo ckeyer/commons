@@ -13,7 +13,7 @@ const (
 
 // -X github.com/ckeyer/commons/version.version=$(VERSION)
 // -X github.com/ckeyer/commons/version.gitCommit=$(GIT_COMMIT)
-// -X github.com/ckeyer/commons/version.buildAt=${shell date "+%Y-%m-%dT%H:%M:%SZ%z"}
+// -X github.com/ckeyer/commons/version.buildAt=${date "+%Y-%m-%dT%H:%M:%SZ%z"}
 var (
 	version, gitCommit string
 	buildAt            string
@@ -33,7 +33,7 @@ func init() {
 	v = *ver
 
 	if gitCommit != "" {
-		v = ver.SetMetadata(gitCommit)
+		v, _ = ver.SetMetadata(gitCommit)
 	}
 
 	if buildAt != "" {
