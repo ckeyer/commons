@@ -4,11 +4,10 @@ import (
 	"database/sql"
 	"fmt"
 
-	logpkg "github.com/ckeyer/go-log"
+	"github.com/ckeyer/logrus"
+
 	_ "github.com/go-sql-driver/mysql"
 )
-
-var Logger *logpkg.Logger
 
 type DBWrapper struct {
 	DB   *sql.DB
@@ -67,12 +66,10 @@ func ConnectMysqlDBConnStr(connStr string, name string) DBWrapper {
 func (db DBWrapper) logError(err error, sqlText string, args ...interface{}) {
 	var errMsg string
 	if err != nil {
-		fmt.Println("logError", err)
+		logrus.Error("logError", err)
 		errMsg = err.Error()
 	}
-	if Logger != nil {
-		Logger.Errorf("DB error, db name: (%s), error: (%s), sql: (%s), args: (%v)", db.Name, errMsg, sqlText, args)
-	}
+	logrus.Errorf("DB error, db name: (%s), error: (%s), sql: (%s), args: (%v)", db.Name, errMsg, sqlText, args)
 }
 
 // TODO implement the QueryXXXErr()

@@ -5,9 +5,12 @@
 *~
 \#*
 .\#*
+
 # Folders
 _obj
 _test
+vendor/*
+!/vendor/vendor.json
 
 # Architecture specific extensions/prefixes
 *.[568vq]

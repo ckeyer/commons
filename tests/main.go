@@ -3,9 +3,9 @@ package main
 import (
 	"time"
 
-	log "github.com/Sirupsen/logrus"
 	"github.com/ckeyer/commons/config"
-	"github.com/ckeyer/commons/util"
+	"github.com/ckeyer/commons/utils"
+	log "github.com/ckeyer/logrus"
 	"github.com/spf13/viper"
 )
 
@@ -39,7 +39,7 @@ func main() {
 		}
 	}()
 
-	util.WaitForExit(true, closeAll)
+	utils.WaitForExit(true, closeAll)
 }
 
 type User struct {

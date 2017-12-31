@@ -20,6 +20,7 @@ const (
 )
 
 func TestSaiyouSend(t *testing.T) {
+	return
 	cli := NewSaiyouSMS(saiyou_appid, saiyou_appkey)
 	err := cli.Send(sms_to, saiyou_prj, SaiyouRemind{"王大猛子", "酱油哥", "愿世界充满爱"})
 	if err != nil {

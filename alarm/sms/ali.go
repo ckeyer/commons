@@ -4,7 +4,7 @@ import (
 	"net/url"
 
 	"github.com/ckeyer/commons/httpclient"
-	"github.com/ckeyer/commons/util"
+	"github.com/ckeyer/commons/utils"
 )
 
 const (
@@ -65,7 +65,7 @@ func (a *AliSmsClient) baseReq(req *AliReqBody) *url.URL {
 	q.Set("Version", req.Version)
 	q.Set("Signature", req.Signature)
 	q.Set("SignatureMethod", req.SignatureMethod)
-	q.Set("SignatureNonce", util.RandomUUID())
+	q.Set("SignatureNonce", utils.RandomUUID())
 	q.Set("SignatureVersion", req.SignatureVersion)
 	q.Set("AccessKeyId", a.AccessKeyId)
 	q.Set("Timestamp", req.Timestamp)

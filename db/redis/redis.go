@@ -4,7 +4,7 @@ import (
 	"errors"
 	"fmt"
 
-	rpkg "gopkg.in/redis.v3"
+	rpkg "gopkg.in/redis.v4"
 )
 
 func ConnectRedis(host string, port int) (client *rpkg.Client, err error) {
