@@ -161,7 +161,8 @@ func TestCopyFile(t *testing.T) {
 func TestReadSymlinkedDirectoryNonExistingSymlink(t *testing.T) {
 	var path string
 	var err error
-	if path, err = ReadSymlinkedDirectory(os.TempDir() + "test/foo/Non/ExistingPath"); err == nil {
+	tmpname := filepath.Join(os.TempDir(), "test/foo/Non/ExistingPath")
+	if path, err = ReadSymlinkedDirectory(tmpname); err == nil {
 		t.Fatalf("error expected for non-existing symlink")
 	}
 
@@ -179,18 +180,20 @@ func TestReadSymlinkedDirectoryToFile(t *testing.T) {
 	var err error
 	var file *os.File
 
-	if file, err = os.Create(os.TempDir() + "testReadSymlinkToFile"); err != nil {
+	testReadSymlinkToFile := filepath.Join(os.TempDir(), "testReadSymlinkToFile")
+	if file, err = os.Create(testReadSymlinkToFile); err != nil {
 		t.Fatalf("failed to create file: %s", err)
 	}
 
 	file.Close()
 
-	if err = os.Symlink(os.TempDir()+"testReadSymlinkToFile", os.TempDir()+"fileLinkTest"); err != nil {
+	fileLinkTest := filepath.Join(os.TempDir(), "fileLinkTest")
+	if err = os.Symlink(testReadSymlinkToFile, fileLinkTest); err != nil {
 		t.Errorf("failed to create symlink: %s", err)
 	}
 
 	var path string
-	if path, err = ReadSymlinkedDirectory(os.TempDir() + "fileLinkTest"); err == nil {
+	if path, err = ReadSymlinkedDirectory(fileLinkTest); err == nil {
 		t.Fatalf("ReadSymlinkedDirectory on a symlink to a file should've failed")
 	}
 
@@ -198,11 +201,11 @@ func TestReadSymlinkedDirectoryToFile(t *testing.T) {
 		t.Fatalf("path should've been empty: %s", path)
 	}
 
-	if err = os.Remove(os.TempDir() + "testReadSymlinkToFile"); err != nil {
+	if err = os.Remove(testReadSymlinkToFile); err != nil {
 		t.Errorf("failed to remove file: %s", err)
 	}
 
-	if err = os.Remove(os.TempDir() + "fileLinkTest"); err != nil {
+	if err = os.Remove(fileLinkTest); err != nil {
 		t.Errorf("failed to remove symlink: %s", err)
 	}
 }
