@@ -3,8 +3,9 @@ package sms
 import (
 	"net/url"
 
-	"github.com/ckeyer/commons/httpclient"
-	"github.com/ckeyer/commons/utils"
+	"github.com/ckeyer/commons/crypto/uuid"
+
+	"github.com/ckeyer/commons/httpcli"
 )
 
 const (
@@ -12,7 +13,7 @@ const (
 )
 
 type AliSmsClient struct {
-	cli *httpclient.Client
+	cli *httpcli.Client
 
 	AccessKeyId     string
 	AccessKeySecret string
@@ -37,7 +38,7 @@ type AliReqBody struct {
 
 func NewAliSmsCli(accessKeyId, accessKeySecret string) *AliSmsClient {
 	return &AliSmsClient{
-		cli: httpclient.NewClient(),
+		cli: httpcli.NewClient(),
 
 		AccessKeyId:     accessKeyId,
 		AccessKeySecret: accessKeySecret,
@@ -65,7 +66,7 @@ func (a *AliSmsClient) baseReq(req *AliReqBody) *url.URL {
 	q.Set("Version", req.Version)
 	q.Set("Signature", req.Signature)
 	q.Set("SignatureMethod", req.SignatureMethod)
-	q.Set("SignatureNonce", utils.RandomUUID())
+	q.Set("SignatureNonce", uuid.NewV4().String())
 	q.Set("SignatureVersion", req.SignatureVersion)
 	q.Set("AccessKeyId", a.AccessKeyId)
 	q.Set("Timestamp", req.Timestamp)
