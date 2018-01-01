@@ -195,6 +195,12 @@
 			"revisionTime": "2016-02-20T15:49:07Z"
 		},
 		{
+			"checksumSHA1": "CEFTYXtWmgSh+3Ik1NmDaJcz4E0=",
+			"path": "gopkg.in/check.v1",
+			"revision": "20d25e2804050c1cd24a7eea1e7a6447dd0e74ec",
+			"revisionTime": "2016-12-08T18:13:25Z"
+		},
+		{
 			"checksumSHA1": "1D8GzeoFGUs5FZOoyC2DpQg8c5Y=",
 			"path": "gopkg.in/mgo.v2",
 			"revision": "3f83fa5005286a7fe593b055f0d7771a7dce4655",
