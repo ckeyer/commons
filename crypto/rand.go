@@ -1,9 +1,11 @@
-package utils
+package crypto
 
 import (
 	crand "crypto/rand"
 	"math/rand"
 	"time"
+
+	"github.com/ckeyer/commons/crypto/uuid"
 )
 
 const (
@@ -26,7 +28,7 @@ func RandomString(count int, set ...[]byte) string {
 		for i := 0; i < count; i++ {
 			ret[i] = sets[RandomInt(0, setlen-1)]
 		}
-		return Bytes2String(ret)
+		return string(ret)
 	}
 
 	return ""
@@ -48,5 +50,5 @@ func RandomInt64(start, end int64) int64 {
 }
 
 func RandomUUID() string {
-	return NewV4().String()
+	return uuid.NewV4().String()
 }
