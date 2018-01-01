@@ -275,3 +275,11 @@ func CreateIfNotExists(path string, isDir bool) error {
 	}
 	return nil
 }
+
+// FileExists exists filepath
+func FileExists(file string) bool {
+	if _, err := os.Stat(file); err != nil {
+		return false
+	}
+	return true
+}
