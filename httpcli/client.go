@@ -2,6 +2,7 @@ package httpcli
 
 import (
 	"bytes"
+	"crypto/tls"
 	"encoding/json"
 	"io"
 	"mime/multipart"
@@ -40,6 +41,9 @@ func NewClient() *Client {
 	return &Client{
 		Client: &http.Client{
 			Jar: new(Jar),
+			Transport: &http.Transport{
+				TLSClientConfig: &tls.Config{},
+			},
 		},
 		cookies: make(CookieMap),
 	}
