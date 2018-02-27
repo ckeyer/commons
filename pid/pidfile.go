@@ -16,7 +16,7 @@ func Exists(pidfile string) error {
 	}
 
 	if !existsPID(pid) {
-		return fmt.Errorf("not found process %s", pid)
+		return fmt.Errorf("not found process %v", pid)
 	}
 
 	return nil
