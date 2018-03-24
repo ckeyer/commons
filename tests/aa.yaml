@@ -1,8 +1,0 @@
-url: "same path"
-
-logging:
-  level: debug
-
-author:
-  name: ckeyer
-  email: dev@ckeyer.com
