@@ -1,48 +1,57 @@
-package main
+node('jnlp-slave') {
 
-import (
-	"time"
+    stage ('checkout') {
+        git credentialsId: 'nevis', url: 'http://gitlab.dpool.sina.com.cn/nevis.io/test.git'
+        sh "pwd"
+        sh "hostname"
+        sh "ls /home/jenkins"
+        sh "ifconfig"
+        echo "make build"
+    }
 
-	"github.com/ckeyer/commons/config"
-	"github.com/ckeyer/commons/utils"
-	log "github.com/ckeyer/logrus"
-	"github.com/spf13/viper"
-)
+    stage ('自定义名称-代码构建') {
+        // 代码编译，开发语言：PHP、Python、Golang、C、Java
+        echo "make build"
 
-func init() {
-	config.Init("aa")
-}
+        // 单元测试
+        echo "make ut"
 
-func main() {
-	log.Debug("start ")
-	log.Info(viper.GetString("url"))
-	log.Info(viper.GetString("author.name"))
+        // 功能测试
+        echo "make ft"
 
-	var u User
-	err := viper.UnmarshalKey("author", &u)
-	if err != nil {
-		log.Error(err)
-		return
-	}
-	log.Info(u)
+        // 其他
+        echo "other script"
 
-	closeAll := make(chan int)
-	go func() {
-		for {
-			select {
-			case <-time.Tick(time.Second):
-				log.Info("one second gone...")
-			case <-closeAll:
-				log.Debug("over")
-				return
-			}
-		}
-	}()
+    }
 
-	utils.WaitForExit(true, closeAll)
-}
+    stage ('自定义名称-构建镜像') {
+        // 镜像构建
+        // URL: 镜像仓库地址，registry.dpool.sina.com.cn/nevis.io
+        // NAME：镜像名称
+        // TAG：镜像版本，包括自定义、CommitID、时间戳
+        // DOCKERFILE_PATH: Dockerfile路径，默认值为/Dockerfile
+        echo "docker build -t URL/NAME:TAG . -f ./DOCKERFILE_PATH" 
 
-type User struct {
-	Name  string `yaml:"name"`
-	Email string `yaml:"email`
+    }
+
+    stage ('自定义名称-灰度发布') {
+        // 执行部署脚本
+        // CLUSTER: 所属集群
+        // NAMESPACE：组织
+        // SERVICE: 服务
+        echo "deploy CLUSTER NAMESPACE SERVICE" 
+
+    }
+
+    input message: "是否继续?"
+
+    stage ('自定义名称-全量发布') {
+        // 执行部署脚本
+        // NAMESPACE：组织
+        // SERVICE: 服务
+        echo "deploy all NAMESPACE SERVICE" 
+
+    }
+
+    echo "Pipeline has been done successfully."
 }
