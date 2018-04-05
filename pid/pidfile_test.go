@@ -4,6 +4,7 @@ import (
 	"os"
 	"path"
 	"testing"
+	"time"
 )
 
 // TestPID
@@ -13,12 +14,18 @@ func TestPID(t *testing.T) {
 		t.Errorf("should return not found error")
 	}
 
-	if err := Generate(pidfile); err != nil {
+	chStop := make(chan struct{})
+	if err := Generate(pidfile, chStop); err != nil {
 		t.Errorf("generate pid file failed, %s", err)
 	}
 	defer os.Remove(pidfile)
 
 	if err := Exists(pidfile); err != nil {
 		t.Errorf("should return nil error")
+	}
+	chStop <- struct{}{}
+	time.Sleep(time.Second)
+	if err := Exists(pidfile); err == nil {
+		t.Errorf("should return an error")
 	}
 }

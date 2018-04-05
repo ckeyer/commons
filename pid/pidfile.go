@@ -32,13 +32,21 @@ func Open(pidfile string) (*os.Process, error) {
 }
 
 // Generate create a pid file for own process.
-func Generate(pidfile string) error {
+func Generate(pidfile string, chDel <-chan struct{}) error {
 	f, err := os.OpenFile(pidfile, os.O_CREATE|os.O_EXCL|os.O_WRONLY, 0644)
 	if err != nil {
 		return err
 	}
 	defer f.Close()
 	fmt.Fprintln(f, os.Getpid())
+	if chDel != nil {
+		go func() {
+			select {
+			case <-chDel:
+				os.Remove(pidfile)
+			}
+		}()
+	}
 	return nil
 }
 
