@@ -2,6 +2,8 @@ package version
 
 import (
 	"fmt"
+	"io"
+	"os"
 	"time"
 
 	"github.com/Masterminds/semver"
@@ -66,4 +68,14 @@ func GetBuildAt() time.Time {
 
 func GetBuildAtString() string {
 	return bAt.Format(timefmt)
+}
+
+func Print(w io.Writer) {
+	if w == nil {
+		w = os.Stdout
+	}
+
+	fmt.Fprintf(w, "Version:    %s\n", GetCompleteVersion())
+	fmt.Fprintf(w, "Git Commit: %s\n", GetGitCommit())
+	fmt.Fprintf(w, "Build At:   %s\n", GetBuildAtString())
 }
