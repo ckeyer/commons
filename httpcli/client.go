@@ -49,21 +49,16 @@ func NewClient() *Client {
 	}
 }
 
-func NewProxyClient(proxyURL string) (*Client, error) {
-	proxy, err := url.Parse(proxyURL)
-	if err != nil {
-		return nil, err
-	}
-
+func NewProxyClient(proxyURL *url.URL) *Client {
 	return &Client{
 		Client: &http.Client{
 			Jar: new(Jar),
 			Transport: &http.Transport{
-				Proxy: http.ProxyURL(proxy),
+				Proxy: http.ProxyURL(proxyURL),
 			},
 		},
 		cookies: make(CookieMap),
-	}, nil
+	}
 }
 
 func (cli *Client) IsExists(Url string) bool {
