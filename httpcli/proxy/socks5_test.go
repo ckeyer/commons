@@ -1,10 +1,11 @@
-package main
+package proxy
 
 import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
 	"os"
+	"testing"
 
 	"golang.org/x/net/proxy"
 )
@@ -15,7 +16,9 @@ const (
 	URL        = "http://d.ckeyer.com/"
 )
 
-func main() {
+// TestSock5
+func TestSock5(t *testing.T) {
+	return
 	auth := &proxy.Auth{
 		Password: "sXOLs3di8qgGB4tRDGUUNKlGD+Amgw",
 	}

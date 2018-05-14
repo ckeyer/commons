@@ -1,28 +1,42 @@
 package useragent
 
 import (
-	"github.com/Masterminds/semver"
-	"github.com/ckeyer/commons/crypto"
+	"math/rand"
+	"time"
 )
 
+const (
+	UserAgentHeader = "User-Agent"
+)
+
+var (
+	allCommons = []string{}
+)
+
+func init() {
+	rand.Seed(time.Now().UnixNano())
+}
+
+func init() {
+	if len(allCommons) > 0 {
+		return
+	}
+	for _, v := range [][]string{
+		Windows,
+		Linuxs,
+		IPads,
+		IPhones,
+		Macintosh,
+		Andorids,
+	} {
+		allCommons = append(allCommons, v...)
+	}
+}
+
+func Commons() {
+
+}
+
 func RandUserAgent() string {
-	return Commons[crypto.RandomInt(0, len(Commons)-1)]
-}
-
-type UserAgent struct {
-	OS             string
-	OSVersion      semver.Version
-	CPUType        string
-	Browser        string
-	BrowserVersion semver.Version
-	Language       string
-	Plugins        string
-}
-
-func NewFirefox() *UserAgent {
-	return nil
-}
-
-func (u *UserAgent) String() string {
-	return ""
+	return allCommons[rand.Intn(len(allCommons))]
 }

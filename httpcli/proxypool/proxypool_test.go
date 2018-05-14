@@ -1,6 +1,7 @@
 package proxypool
 
 import (
+	"net/http"
 	"os"
 	"testing"
 	"time"
@@ -23,8 +24,6 @@ func TestFormatOption(t *testing.T) {
 }
 
 func TestProxyPool(t *testing.T) {
-	t.Error("...")
-
 	u := os.Getenv("ProxyPoolURL")
 	if u == "" {
 		return
@@ -40,9 +39,18 @@ func TestProxyPool(t *testing.T) {
 
 	t.Logf("proxy pool ip count: %v", len(pool.pool))
 	for i := 0; i < 10; i++ {
-		cli := pool.NewClient()
-		cli.Timeout = time.Second * 5
-		_, err := cli.Get("http://example.ckeyer.com/")
+		pu, err := pool.ProxyURL()
+		if err != nil {
+			t.Error(err)
+			return
+		}
+		cli := &http.Client{
+			Transport: &http.Transport{
+				Proxy: http.ProxyURL(pu),
+			},
+			Timeout: time.Second * 5,
+		}
+		_, err = cli.Get("http://example.ckeyer.com/")
 		if err != nil {
 			t.Error(err)
 		}

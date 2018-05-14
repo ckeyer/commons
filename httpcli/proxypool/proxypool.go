@@ -9,7 +9,6 @@ import (
 	"sync"
 	"time"
 
-	"github.com/ckeyer/commons/httpcli"
 	"github.com/ckeyer/logrus"
 )
 
@@ -162,12 +161,6 @@ func (p *ProxyPool) ProxyURL() (*url.URL, error) {
 	}
 
 	return nil, fmt.Errorf("not found a useful proxy url")
-}
-
-// NewClient
-func (p *ProxyPool) NewClient() *httpcli.Client {
-	pu, _ := p.ProxyURL()
-	return httpcli.NewProxyClient(pu)
 }
 
 // remove

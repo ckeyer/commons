@@ -11,6 +11,6 @@ func NewRequest(method, url string, body io.Reader) (*http.Request, error) {
 		return nil, err
 	}
 
-	req.Header.Add("User-Agent", RandUserAgent())
+	req.Header.Add(UserAgentHeader, RandUserAgent())
 	return req, nil
 }

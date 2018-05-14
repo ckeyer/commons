@@ -183,10 +183,28 @@
 			"revisionTime": "2017-12-28T07:19:06Z"
 		},
 		{
+			"checksumSHA1": "+ukkAI9DvJ59HlvJSTVWME5Rqcg=",
+			"path": "golang.org/x/net/internal/socks",
+			"revision": "640f4622ab692b87c2f3a94265e6f579fe38263d",
+			"revisionTime": "2018-05-02T16:14:02Z"
+		},
+		{
+			"checksumSHA1": "UrFs0T7kkYsUxJG5bsJt7KB8ejI=",
+			"path": "golang.org/x/net/proxy",
+			"revision": "640f4622ab692b87c2f3a94265e6f579fe38263d",
+			"revisionTime": "2018-05-02T16:14:02Z"
+		},
+		{
 			"checksumSHA1": "LGrodHuObKohCrLBDzLKIpEZsPs=",
 			"path": "golang.org/x/sys/unix",
 			"revision": "83801418e1b59fb1880e363299581ee543af32ca",
 			"revisionTime": "2017-12-22T10:59:23Z"
+		},
+		{
+			"checksumSHA1": "Dfz4tGItokMvHZENCsBmPPB8FGQ=",
+			"path": "golang.org/x/sys/windows",
+			"revision": "6f686a352de66814cdd080d970febae7767857a3",
+			"revisionTime": "2018-05-02T15:14:59Z"
 		},
 		{
 			"checksumSHA1": "ziMb9+ANGRJSSIuxYdRbA+cDRBQ=",
@@ -227,6 +245,12 @@
 		{
 			"checksumSHA1": "XQsrqoNT1U0KzLxOFcAZVvqhLfk=",
 			"path": "gopkg.in/mgo.v2/internal/json",
+			"revision": "3f83fa5005286a7fe593b055f0d7771a7dce4655",
+			"revisionTime": "2016-08-18T02:01:20Z"
+		},
+		{
+			"checksumSHA1": "LEvMCnprte47qdAxWvQ/zRxVF1U=",
+			"path": "gopkg.in/mgo.v2/internal/sasl",
 			"revision": "3f83fa5005286a7fe593b055f0d7771a7dce4655",
 			"revisionTime": "2016-08-18T02:01:20Z"
 		},
