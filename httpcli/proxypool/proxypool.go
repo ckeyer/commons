@@ -2,6 +2,7 @@ package proxypool
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"net/url"
@@ -15,6 +16,23 @@ import (
 const (
 	ProxyPoolOptionCountry_domestic = "国内"
 	ProxyPoolOptionCountry_foreign  = "国外"
+)
+
+var (
+	DistantFuture = time.Hour * 24 * 365 * 100
+)
+
+type ProxyStatus uint8
+
+// const (
+// 	ProxyStatusOK          = iota
+// 	ProxyStatusBanned      // 被临时封禁
+// 	ProxyStatusUnreachable // 不可达
+// )
+
+var (
+	ErrFirewallDeny = errors.New("Firewall denied access")
+	ErrTimeout      = errors.New("Connection timeout")
 )
 
 type ProxyPoolOption struct {
@@ -65,14 +83,14 @@ type ProxyPool struct {
 	sync.Mutex
 
 	opt    ProxyPoolOption
-	pool   map[*url.URL]bool
+	pool   map[*url.URL]time.Time
 	stopCh chan struct{}
 }
 
 func NewPool(opt ProxyPoolOption) (*ProxyPool, error) {
 	p := &ProxyPool{
 		opt:    opt,
-		pool:   map[*url.URL]bool{},
+		pool:   map[*url.URL]time.Time{},
 		stopCh: make(chan struct{}),
 	}
 
@@ -141,11 +159,11 @@ func (p *ProxyPool) Close() {
 }
 
 // Dirty
-func (p *ProxyPool) Dirty(item *url.URL) {
+func (p *ProxyPool) Dirty(item *url.URL, wait time.Duration) {
 	p.Lock()
 	defer p.Unlock()
 	if _, exists := p.pool[item]; exists {
-		p.pool[item] = false
+		p.pool[item] = time.Now().Add(wait)
 	}
 }
 
@@ -154,8 +172,9 @@ func (p *ProxyPool) ProxyURL() (*url.URL, error) {
 	p.Lock()
 	defer p.Unlock()
 
-	for u, ok := range p.pool {
-		if ok {
+	now := time.Now()
+	for u, tm := range p.pool {
+		if tm.Before(now) {
 			return u, nil
 		}
 	}
@@ -163,12 +182,26 @@ func (p *ProxyPool) ProxyURL() (*url.URL, error) {
 	return nil, fmt.Errorf("not found a useful proxy url")
 }
 
+// ProxyClient
+func (p *ProxyPool) Client() (*url.URL, *http.Client, error) {
+	u, err := p.ProxyURL()
+	if err != nil {
+		return nil, http.DefaultClient, err
+	}
+	cli := &http.Client{
+		Transport: &http.Transport{
+			Proxy: http.ProxyURL(u),
+		},
+	}
+	return u, cli, nil
+}
+
 // remove
 func (p *ProxyPool) remove(item *url.URL) {
 	p.Lock()
 	defer p.Unlock()
 	if _, exists := p.pool[item]; exists {
-		p.pool[item] = false
+		p.pool[item] = time.Now().Add(DistantFuture)
 	}
 }
 
@@ -177,6 +210,6 @@ func (p *ProxyPool) add(item *url.URL) {
 	p.Lock()
 	defer p.Unlock()
 	if _, exists := p.pool[item]; !exists {
-		p.pool[item] = true
+		p.pool[item] = time.Now()
 	}
 }

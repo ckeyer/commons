@@ -11,6 +11,7 @@ const (
 
 var (
 	allCommons = []string{}
+	pcCommons  = []string{}
 )
 
 func init() {
@@ -26,10 +27,19 @@ func init() {
 		Linuxs,
 		IPads,
 		IPhones,
+		WinPhones,
 		Macintosh,
 		Andorids,
 	} {
 		allCommons = append(allCommons, v...)
+	}
+
+	for _, v := range [][]string{
+		Windows,
+		Linuxs,
+		Macintosh,
+	} {
+		pcCommons = append(pcCommons, v...)
 	}
 }
 
@@ -39,4 +49,9 @@ func Commons() {
 
 func RandUserAgent() string {
 	return allCommons[rand.Intn(len(allCommons))]
+}
+
+func PCUserAgent() string {
+	return pcCommons[rand.Intn(len(pcCommons))]
+
 }
