@@ -2,8 +2,8 @@ package proxypool
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
+	"io"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -18,21 +18,23 @@ const (
 	ProxyPoolOptionCountry_foreign  = "国外"
 )
 
+const (
+	DefaultMaxRetryTimes = 3
+	DefaultHTTPTimeout   = time.Second * 5
+	DefaultWaitInterval  = time.Second * 15
+)
+
 var (
 	DistantFuture = time.Hour * 24 * 365 * 100
 )
 
-type ProxyStatus uint8
+// type ProxyStatus uint8
 
 // const (
 // 	ProxyStatusOK          = iota
 // 	ProxyStatusBanned      // 被临时封禁
 // 	ProxyStatusUnreachable // 不可达
 // )
-
-var (
-	ErrNotFound = errors.New("proxypool: not found a useful proxy url")
-)
 
 type ProxyPoolOption struct {
 	PoolURL     string
@@ -82,18 +84,37 @@ type ProxyPool struct {
 	sync.Mutex
 
 	opt    ProxyPoolOption
-	pool   map[*url.URL]time.Time
+	pool   map[string]*proxyURL
 	stopCh chan struct{}
+
+	// client options
+	pre          []PreHandler
+	post         []PostHandler
+	retryTimes   int
+	waitInterval time.Duration
+	timeout      time.Duration
 }
+
+type proxyURL struct {
+	proxyURL  *url.URL
+	scheduled time.Time
+}
+
+type PreHandler func(*http.Request) error
+
+type PostHandler func(*http.Response, io.Reader) error
 
 func NewPool(opt ProxyPoolOption) (*ProxyPool, error) {
 	p := &ProxyPool{
-		opt:    opt,
-		pool:   map[*url.URL]time.Time{},
-		stopCh: make(chan struct{}),
+		opt:          opt,
+		pool:         map[string]*proxyURL{},
+		stopCh:       make(chan struct{}),
+		retryTimes:   DefaultMaxRetryTimes,
+		timeout:      DefaultHTTPTimeout,
+		waitInterval: DefaultWaitInterval,
 	}
 
-	err := p.updateProxyURLs()
+	err := p.refreshProxyURLs()
 	if err != nil {
 		return nil, err
 	}
@@ -107,10 +128,10 @@ func NewPool(opt ProxyPoolOption) (*ProxyPool, error) {
 func (p *ProxyPool) runReplace() {
 	for {
 		select {
-		case <-time.Tick(time.Minute * 25):
-			err := p.updateProxyURLs()
+		case <-time.Tick(time.Minute * 10):
+			err := p.refreshProxyURLs()
 			if err != nil {
-				logrus.Errorf("load proxy pool failed, %s", err)
+				logrus.Errorf("proxypool: load proxy pool failed, %s", err)
 			}
 		case <-p.stopCh:
 			return
@@ -118,7 +139,7 @@ func (p *ProxyPool) runReplace() {
 	}
 }
 
-func (p *ProxyPool) updateProxyURLs() error {
+func (p *ProxyPool) refreshProxyURLs() error {
 	resp, err := http.Get(p.opt.URL().String())
 	if err != nil {
 		return err
@@ -161,8 +182,8 @@ func (p *ProxyPool) Close() {
 func (p *ProxyPool) Dirty(item *url.URL, wait time.Duration) {
 	p.Lock()
 	defer p.Unlock()
-	if _, exists := p.pool[item]; exists {
-		p.pool[item] = time.Now().Add(wait)
+	if purl, exists := p.pool[item.String()]; exists {
+		purl.scheduled = time.Now().Add(wait)
 	}
 }
 
@@ -172,36 +193,21 @@ func (p *ProxyPool) ProxyURL() (*url.URL, error) {
 	defer p.Unlock()
 
 	now := time.Now()
-	for u, tm := range p.pool {
-		if tm.Before(now) {
-			return u, nil
+	for _, purl := range p.pool {
+		if purl.scheduled.Before(now) {
+			return purl.proxyURL, nil
 		}
 	}
 
 	return nil, ErrNotFound
 }
 
-// ProxyClient
-func (p *ProxyPool) NewClient() (*http.Client, *url.URL, error) {
-	u, err := p.ProxyURL()
-	if err != nil {
-		return http.DefaultClient, nil, err
-	}
-	cli := &http.Client{
-		Transport: &http.Transport{
-			Proxy: http.ProxyURL(u),
-		},
-		Timeout: time.Second * 10,
-	}
-	return cli, u, nil
-}
-
 // remove
 func (p *ProxyPool) remove(item *url.URL) {
 	p.Lock()
 	defer p.Unlock()
-	if _, exists := p.pool[item]; exists {
-		p.pool[item] = time.Now().Add(DistantFuture)
+	if purl, exists := p.pool[item.String()]; exists {
+		purl.scheduled = time.Now().Add(DistantFuture)
 	}
 }
 
@@ -209,7 +215,12 @@ func (p *ProxyPool) remove(item *url.URL) {
 func (p *ProxyPool) add(item *url.URL) {
 	p.Lock()
 	defer p.Unlock()
-	if _, exists := p.pool[item]; !exists {
-		p.pool[item] = time.Now()
+	if _, exists := p.pool[item.String()]; !exists {
+		p.pool[item.String()] = &proxyURL{proxyURL: item, scheduled: time.Now()}
 	}
+}
+
+// sleep
+func (p *ProxyPool) sleep() {
+	time.Sleep(p.waitInterval)
 }
