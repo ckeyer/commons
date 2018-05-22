@@ -31,8 +31,7 @@ type ProxyStatus uint8
 // )
 
 var (
-	ErrFirewallDeny = errors.New("Firewall denied access")
-	ErrTimeout      = errors.New("Connection timeout")
+	ErrNotFound = errors.New("proxypool: not found a useful proxy url")
 )
 
 type ProxyPoolOption struct {
@@ -179,21 +178,22 @@ func (p *ProxyPool) ProxyURL() (*url.URL, error) {
 		}
 	}
 
-	return nil, fmt.Errorf("not found a useful proxy url")
+	return nil, ErrNotFound
 }
 
 // ProxyClient
-func (p *ProxyPool) Client() (*url.URL, *http.Client, error) {
+func (p *ProxyPool) NewClient() (*http.Client, *url.URL, error) {
 	u, err := p.ProxyURL()
 	if err != nil {
-		return nil, http.DefaultClient, err
+		return http.DefaultClient, nil, err
 	}
 	cli := &http.Client{
 		Transport: &http.Transport{
 			Proxy: http.ProxyURL(u),
 		},
+		Timeout: time.Second * 10,
 	}
-	return u, cli, nil
+	return cli, u, nil
 }
 
 // remove
