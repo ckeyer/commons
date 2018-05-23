@@ -1,6 +1,7 @@
 package proxypool
 
 import (
+	"bytes"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -96,11 +97,18 @@ func (p *ProxyPool) Do(req *http.Request) (resp *http.Response, err error) {
 		if IsTimeoutErr(err) || IsConnectionErr(err) {
 			logrus.Warnf("proxypool: do request at %v times failed, %s", i+1, err)
 			p.Dirty(purl, time.Minute*30)
+			i--
+			continue
+		}
+		if err != nil {
+			logrus.Warnf("proxypool: do request at %v times failed, %s", i+1, err)
+			p.Dirty(purl, time.Minute*3)
 			continue
 		}
 
-		if err := p.doPostHandlers(resp); err != nil {
+		if err = p.doPostHandlers(resp); err != nil {
 			logrus.Warnf("proxypool.Do: got invalid response body at %v times failed, %s", i+1, err)
+			i--
 			p.Dirty(purl, time.Minute*30)
 			continue
 		}
@@ -110,9 +118,10 @@ func (p *ProxyPool) Do(req *http.Request) (resp *http.Response, err error) {
 }
 
 func (p *ProxyPool) doPostHandlers(resp *http.Response) error {
-	body := ioutil.NopCloser(resp.Body)
+	bodyBytes, _ := ioutil.ReadAll(resp.Body)
+	resp.Body = ioutil.NopCloser(bytes.NewBuffer(bodyBytes))
 	for _, postfunc := range p.post {
-		if err := postfunc(resp, body); err != nil {
+		if err := postfunc(resp, bytes.NewBuffer(bodyBytes)); err != nil {
 			return err
 		}
 	}

@@ -56,3 +56,8 @@ func TestProxyPool(t *testing.T) {
 		}
 	}
 }
+
+// TestProxyClient
+func TestProxyClient(t *testing.T) {
+
+}

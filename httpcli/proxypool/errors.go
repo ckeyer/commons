@@ -28,7 +28,7 @@ func IsTimeoutErr(err error) bool {
 
 // isConnectionErr
 func IsConnectionErr(err error) bool {
-	if err != nil {
+	if err == nil {
 		return false
 	}
 	return strings.Contains(err.Error(), "unexpected EOF")

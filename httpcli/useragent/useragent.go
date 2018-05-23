@@ -53,5 +53,4 @@ func RandUserAgent() string {
 
 func PCUserAgent() string {
 	return pcCommons[rand.Intn(len(pcCommons))]
-
 }
